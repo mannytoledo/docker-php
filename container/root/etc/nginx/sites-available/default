@@ -1,0 +1,30 @@
+server {
+  listen 80;
+
+  server_name web; # TODO: replace with environment variable
+  root /app/public; # TODO: replace with environment variable
+
+  index index.php;
+
+  location / {
+    try_files $uri @php-fpm;
+  }
+
+  location ~ \.php$ {
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+    include /etc/nginx/fastcgi_params;
+    fastcgi_param DOCUMENT_ROOT /;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param PATH_INFO $fastcgi_script_name;
+  }
+
+  location @php-fpm {
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+
+    include /etc/nginx/fastcgi_params;
+
+    fastcgi_param DOCUMENT_ROOT /;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param PATH_INFO $fastcgi_script_name;
+  }
+}
